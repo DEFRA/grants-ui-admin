@@ -19,7 +19,8 @@ describe('#homeController', () => {
       url: '/'
     })
 
-    expect(result).toEqual(expect.stringContaining('Home |'))
+    expect(result).toContain('Grants UI admin</h1>')
+    expect(result).toContain('The Grants UI admin service is running.')
     expect(statusCode).toBe(statusCodes.ok)
   })
 })

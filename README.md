@@ -4,8 +4,10 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_grants-ui-admin&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DEFRA_grants-ui-admin)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_grants-ui-admin&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DEFRA_grants-ui-admin)
 
-Core delivery platform Node.js Frontend Template.
+Internal CDP frontend for Grants UI administration. The skeleton serves a landing
+page at `/` and the CDP health check at `/health`.
 
+- [CDP deployment](#cdp-deployment)
 - [Requirements](#requirements)
   - [Node.js](#nodejs)
 - [Server-side Caching](#server-side-caching)
@@ -27,6 +29,19 @@ Core delivery platform Node.js Frontend Template.
 - [Licence](#licence)
   - [About the licence](#about-the-licence)
 
+## CDP deployment
+
+The publish workflow builds and publishes a versioned image from `main`. Enable
+auto-deployment for the eligible lower environments in the CDP Portal after the
+first image is published. Deploy the same tested version through the Portal for
+any remaining environments, including production.
+
+In each environment, open `https://grants-ui-admin.<env>.cdp-int.defra.cloud/`
+from a Defra device or VPN and confirm the page says the service is running.
+Check that `/health` returns HTTP 200 and verify that the internal URL is
+unreachable from an external network. Use the default CDP route without a vanity
+URL.
+
 ## Requirements
 
 ### Node.js
@@ -42,8 +57,7 @@ nvm use
 
 ## Server-side Caching
 
-We use Catbox for server-side caching. By default the service will use CatboxRedis when deployed and CatboxMemory for
-local development.
+We use Catbox for server-side caching. Production uses CatboxRedis by default. Other environments use CatboxMemory.
 You can override the default behaviour by setting the `SESSION_CACHE_ENGINE` environment variable to either `redis` or
 `memory`.
 
@@ -55,9 +69,6 @@ instance of the service and it will not persist between restarts.
 Redis is an in-memory key-value store. Every instance of a service has access to the same Redis key-value store similar
 to how services might have a database (or MongoDB). All frontend services are given access to a namespaced prefixed that
 matches the service name. e.g. `my-service` will have access to everything in Redis that is prefixed with `my-service`.
-
-If your service does not require a session cache to be shared between instances or if you don't require Redis, you can
-disable setting `SESSION_CACHE_ENGINE=false` or changing the default value in `src/config/index.js`.
 
 ## Proxy
 
@@ -99,10 +110,10 @@ npm run dev
 
 ### Production
 
-To mimic the application running in `production` mode locally run:
+To run in production mode locally without Redis, use the in-memory session cache:
 
 ```bash
-npm start
+SESSION_CACHE_ENGINE=memory AWS_EMF_ENVIRONMENT=Local npm start
 ```
 
 ### Npm scripts
