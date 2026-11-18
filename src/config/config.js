@@ -118,7 +118,7 @@ export const config = convict({
       engine: {
         doc: 'backend cache is written to',
         format: ['redis', 'memory'],
-        default: isProduction ? 'redis' : 'memory',
+        default: 'memory',
         env: 'SESSION_CACHE_ENGINE'
       },
       name: {
